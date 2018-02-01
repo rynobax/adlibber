@@ -14,12 +14,13 @@ export const onConnection = (con: VoiceConnection) => {
   const recv = con.createReceiver();
   decoder.startUtt();
   recv.on('opus', (user, buf) => {
-    console.log(user.username);
-    console.log(buf.length);
     decoder.processRaw(buf, false, false);
     const it = decoder.seg().iter();
-    for(let seg of it) {
+    for(let seg of decoder.seg().iter()) {
       console.log(seg.word, seg.startFrame, seg.endFrame);
+    }
+    for(let hyp of decoder.nbest().iter()) {
+	    console.log(hyp.hypstr)
     }
   })
 }
