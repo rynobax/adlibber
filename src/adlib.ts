@@ -1,6 +1,7 @@
 import { VoiceConnection } from 'discord.js';
 // import { ps } from 'pocketsphinx';
-import Sonus from 'sonus';
+// import Sonus from 'sonus';
+const Sonus = require('sonus');
 const hotwords = [
   { file: '../models/Hello.pmdl', hotword: 'hello' }
 ];
