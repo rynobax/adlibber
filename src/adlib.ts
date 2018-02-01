@@ -18,8 +18,11 @@ export const onConnection = (con: VoiceConnection) => {
     buf;
     decoder.processRaw(buf, false, false);
     const it = decoder.seg().iter();
+    const h = decoder.nbest().iter();
     console.log(decoder);
     console.log(it);
+    console.log(h);
+    console.log('');
     /*
     for(let seg of it) {
       console.log(seg.word, seg.startFrame, seg.endFrame);
