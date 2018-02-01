@@ -1,12 +1,19 @@
 import { VoiceConnection } from 'discord.js';
 import { Detector, Models } from 'snowboy';
+import chunker from 'stream-chunker';
 
 const models = new Models();
 
 models.add({
   file: 'snowboyModels/Hello.pmdl',
-  sensitivity: '0.5',
+  sensitivity: '0.1',
   hotwords : 'hello'
+});
+
+models.add({
+  file: 'snowboyModels/snowboy.umdl',
+  sensitivity: '0.5',
+  hotwords : 'snowboy'
 });
 
 const detector = new Detector({
@@ -27,7 +34,7 @@ detector.on('sound', function (buffer) {
 });
 
 detector.on('error', function () {
-  console.log('error');
+  // console.log('error');
 });
 
 detector.on('hotword', function (index, hotword, buffer) {
@@ -37,13 +44,48 @@ detector.on('hotword', function (index, hotword, buffer) {
   // data after the hotword.
   console.log(buffer);
   console.log('hotword', index, hotword);
+  process.exit();
 });
 
+var Chunker = require('stream-chunker');
+var opts = {
+    flush: false,
+    align: false,
+    encoding: 'utf8'
+};
+var chunker = Chunker(16, opts);
+chunker.on('data', data => {
+  console.log('data: ', data.length);
+  detector.write(data);
+})
 export const onConnection = (con: VoiceConnection) => {
   console.log('connected');
   const recv = con.createReceiver();
+
+  const pcmRecvs = {};
   recv.on('opus', (user, buf) => {
-    detector.write(buf);
+    const uid = user.id;
+    if(!pcmRecvs[uid]) {
+      const strm = recv.createPCMStream(user);
+      pcmRecvs[uid] = strm;
+      strm.on('close', () => pcmRecvs[uid] = null);
+      strm.on('data', data => {
+        console.log(data.length);
+      });
+      return;
+    }
+    /*
+    let newBuf;
+    const len = buf.length;
+    if(len % 2 === 1) {
+      newBuf = buf.slice(0, len-1);
+    } else {
+      newBuf = buf;
+    }
+    */
+    // console.log(newBuf.length);
+    // chunker.write(buf);
+    
     user;
     buf;
   })
