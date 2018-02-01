@@ -1,7 +1,7 @@
 import { VoiceConnection } from 'discord.js';
 import { ps } from 'pocketsphinx';
 
-const modeldir = '../../pocketsphinx/model/en-us/';
+const modeldir = '../model/en-us/';
 
 var config = new ps.Decoder.defaultConfig();
 config.setString("-hmm", modeldir + "en-us");
