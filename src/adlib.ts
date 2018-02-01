@@ -20,6 +20,7 @@ export const onConnection = (con: VoiceConnection) => {
     const it = decoder.seg().iter();
     const h = decoder.nbest().iter();
     console.log(decoder);
+    console.log(decoder.hyp());
     console.log(it);
     console.log(h);
     let seg;
