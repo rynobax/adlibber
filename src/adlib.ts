@@ -4,7 +4,7 @@ import { Detector, Models } from 'snowboy';
 const models = new Models();
 
 models.add({
-  file: 'snowboyModels/hello.pmdl',
+  file: 'snowboyModels/Hello.pmdl',
   sensitivity: '0.5',
   hotwords : 'hello'
 });
