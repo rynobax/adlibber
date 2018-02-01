@@ -28,11 +28,13 @@
     "erlpack": "github:hammerandchisel/erlpack",
     "ffmpeg-binaries": "^3.2.2-3",
     "node-opus": "^0.2.7",
+    "pcm-util": "^3.0.0",
     "pocketsphinx": "^5.0.7",
     "snowboy": "^1.2.0",
     "sonus": "^0.1.9",
     "stream-chunker": "^1.2.8",
     "tslib": "~1.8.1",
-    "uws": "^9.14.0"
+    "uws": "^9.14.0",
+    "wav": "^1.0.1"
   }
 }

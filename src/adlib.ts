@@ -1,6 +1,8 @@
 import { VoiceConnection } from 'discord.js';
 import { Detector, Models } from 'snowboy';
-import chunker from 'stream-chunker';
+import { WriteStream } from 'fs';
+const pcm = require('pcm-util');
+var wav = require('wav');
 
 const models = new Models();
 
@@ -12,29 +14,29 @@ models.add({
 
 models.add({
   file: 'snowboyModels/snowboy.umdl',
-  sensitivity: '0.5',
+  sensitivity: '0.9',
   hotwords : 'snowboy'
 });
 
-const detector = new Detector({
+const detector: WriteStream = new Detector({
   resource: "snowboyModels/common.res",
   models: models,
-  audioGain: 2.0
+  audioGain: 2.0,
 });
 
 detector.on('silence', function () {
-  console.log('silence');
+  // console.log('silence');
 });
 
 detector.on('sound', function (buffer) {
   buffer;
   // <buffer> contains the last chunk of the audio that triggers the "sound"
   // event. It could be written to a wav stream.
-  console.log('sound');
+  // console.log('sound');
 });
 
 detector.on('error', function () {
-  // console.log('error');
+  console.log('error');
 });
 
 detector.on('hotword', function (index, hotword, buffer) {
@@ -47,17 +49,6 @@ detector.on('hotword', function (index, hotword, buffer) {
   process.exit();
 });
 
-var Chunker = require('stream-chunker');
-var opts = {
-    flush: false,
-    align: false,
-    encoding: 'utf8'
-};
-var chunker = Chunker(16, opts);
-chunker.on('data', data => {
-  console.log('data: ', data.length);
-  detector.write(data);
-})
 export const onConnection = (con: VoiceConnection) => {
   console.log('connected');
   const recv = con.createReceiver();
@@ -66,11 +57,19 @@ export const onConnection = (con: VoiceConnection) => {
   recv.on('opus', (user, buf) => {
     const uid = user.id;
     if(!pcmRecvs[uid]) {
+      var writer: WriteStream = new wav.FileWriter('output.wav');
       const strm = recv.createPCMStream(user);
       pcmRecvs[uid] = strm;
-      strm.on('close', () => pcmRecvs[uid] = null);
+      console.log('start');
+      strm.on('end', () => {
+        console.log('finish');
+        pcmRecvs[uid] = null
+        writer.end();
+      });
+      con.playStream(strm);
       strm.on('data', data => {
-        console.log(data.length);
+        writer.write(data);
+        detector.write(data);
       });
       return;
     }
