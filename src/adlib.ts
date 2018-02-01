@@ -14,6 +14,8 @@ export const onConnection = (con: VoiceConnection) => {
   const recv = con.createReceiver();
   decoder.startUtt();
   recv.on('opus', (user, buf) => {
+    user;
+    buf;
     decoder.processRaw(buf, false, false);
     const it = decoder.seg().iter();
     console.log(decoder);
