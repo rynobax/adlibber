@@ -15,10 +15,12 @@ export const onConnection = (con: VoiceConnection) => {
   decoder.startUtt();
   recv.on('opus', (user, buf) => {
     decoder.processRaw(buf, false, false);
+    /*
     const it = decoder.seg().iter();
-    for(let seg of decoder.seg().iter()) {
+    for(let seg of it) {
       console.log(seg.word, seg.startFrame, seg.endFrame);
     }
+    */
     for(let hyp of decoder.nbest().iter()) {
 	    console.log(hyp.hypstr)
     }
