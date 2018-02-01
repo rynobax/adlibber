@@ -1,32 +1,23 @@
-/**
- * Some predefined delays (in milliseconds).
- */
-export enum Delays {
-  Short = 500,
-  Medium = 2000,
-  Long = 5000,
-}
+require('dotenv').config()
+// https://discordapp.com/oauth2/authorize?client_id=CLIENT_ID_HERE&scope=bot&permissions=35652608
+import { Client } from 'discord.js';
+import { onConnection } from './adlib';
+const client = new Client();
+const { BOT_TOKEN } = process.env;
+console.log('BOT_TOKEN: ', BOT_TOKEN);
 
-/**
- * Returns a Promise<string> that resolves after given time.
- *
- * @param {string} name - A name.
- * @param {number=} [delay=Delays.Medium] - Number of milliseconds to delay resolution of the Promise.
- * @returns {Promise<string>}
- */
-function delayedHello(name: string, delay: number = Delays.Medium): Promise<string> {
-  return new Promise<string>(
-    (resolve: (value?: string | PromiseLike<string>) => void) => setTimeout(
-      () => resolve(`Hello, ${name}`),
-      delay,
-    ),
-  );
-}
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user.tag}!`);
+});
 
-// Below are examples of using TSLint errors suppression
-// Here it is supressing missing type definitions for greeter function
+client.on('message', msg => {
+  if (msg.content === '!MIGOS' || true) {
+    if (!msg.guild) return;
+    const voiceChannel = msg.member.voiceChannel;
+    if(!voiceChannel) return;
+    voiceChannel.join()
+      .then(onConnection);
+  }
+});
 
-export async function greeter(name) { // tslint:disable-line typedef
-  // tslint:disable-next-line no-unsafe-any no-return-await
-  return await delayedHello(name, Delays.Long);
-}
+client.login(BOT_TOKEN);

@@ -1,7 +1,6 @@
 {
-  "name": "node-typescript-boilerplate",
+  "name": "adlibber",
   "version": "0.0.0",
-  "description": "Minimalistic boilerplate to quick-start Node.js development in TypeScript.",
   "engineStrict": true,
   "engines": {
     "node": ">= 8.9.0"
@@ -9,8 +8,9 @@
   "devDependencies": {
     "@types/jest": "~22.0.1",
     "@types/node": "~8.5.8",
-    "jest": "~22.1.1",
+    "nodemon": "^1.14.11",
     "rimraf": "~2.6.2",
+    "ts-node": "^4.1.0",
     "tslint": "~5.9.1",
     "tslint-microsoft-contrib": "~5.0.2",
     "tsutils": "~2.18.0",
@@ -19,24 +19,16 @@
   "scripts": {
     "clean": "rimraf coverage build tmp",
     "build": "tsc -p tsconfig.release.json",
-    "watch": "tsc -w -p tsconfig.release.json",
-    "lint": "tslint -t stylish --project \"tsconfig.json\"",
-    "pretest": "npm run lint",
-    "test": "npm run test-only",
-    "test-only": "jest --coverage",
-    "test:watch": "jest --watch"
+    "start": "ts-node src/main.ts",
+    "watch": "nodemon --exec \"ts-node\" src/main.ts"
   },
-  "author": "Jakub Synowiec <github@jakubsynowiec.info>",
-  "license": "APLv2",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jsynowiec/node-typescript-boilerplate.git"
-  },
-  "bugs": {
-    "url": "https://github.com/jsynowiec/node-typescript-boilerplate/issues"
-  },
-  "homepage": "https://github.com/jsynowiec/node-typescript-boilerplate#readme",
   "dependencies": {
-    "tslib": "~1.8.1"
+    "discord.js": "^11.3.0",
+    "dotenv": "^5.0.0",
+    "erlpack": "github:hammerandchisel/erlpack",
+    "ffmpeg-binaries": "^3.2.2-3",
+    "node-opus": "^0.2.7",
+    "tslib": "~1.8.1",
+    "uws": "^9.14.0"
   }
 }
