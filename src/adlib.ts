@@ -3,7 +3,7 @@ import { VoiceConnection } from 'discord.js';
 // import Sonus from 'sonus';
 const Sonus = require('sonus');
 const hotwords = [
-  { file: '../models/Hello.pmdl', hotword: 'hello' }
+  { file: 'models/Hello.pmdl', hotword: 'hello' }
 ];
 const language = 'en-US';
 var events = require('events');
