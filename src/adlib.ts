@@ -1,9 +1,4 @@
 import { VoiceConnection } from 'discord.js';
-process.chdir('./lib');
-require('../lib/pocketsphinx');
-var PS;
-setInterval(() => console.log('p', PS), 1000);
-
 
 export const onConnection = (con: VoiceConnection) => {
   console.log('connected');
