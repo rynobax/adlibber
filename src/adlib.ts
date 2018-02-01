@@ -22,6 +22,15 @@ export const onConnection = (con: VoiceConnection) => {
     console.log(decoder);
     console.log(it);
     console.log(h);
+    let seg;
+    while ((seg = it.next()) != null) {
+        console.log(seg.word, seg.startFrame, seg.endFrame);
+    }
+    let i;
+    let hyp;
+    for (i = 0; i < 10 && ((hyp = h.next()) != null); i++) {
+      console.log(hyp.hypstr)
+    }
     console.log('');
     /*
     for(let seg of it) {
