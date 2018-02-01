@@ -1,12 +1,12 @@
 import { VoiceConnection } from 'discord.js';
 import { ps } from 'pocketsphinx';
 
-const modeldir = '../models';
+const modeldir = '../../pocketsphinx/model/en-us/';
 
 var config = new ps.Decoder.defaultConfig();
-// config.setString("-hmm", modeldir + "en-us");
-// config.setString("-dict", modeldir + "cmudict-en-us.dict");
-// config.setString("-lm", modeldir + "en-us.lm.bin");
+config.setString("-hmm", modeldir + "en-us");
+config.setString("-dict", modeldir + "cmudict-en-us.dict");
+config.setString("-lm", modeldir + "en-us.lm.bin");
 const decoder = new ps.Decoder(config);
 
 export const onConnection = (con: VoiceConnection) => {
