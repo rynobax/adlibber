@@ -1,6 +1,5 @@
 import { VoiceConnection } from 'discord.js';
 const request = require('request');
-console.log(request);
 const witToken = process.env.WIT_TOKEN;
 
 export const onConnection = (con: VoiceConnection) => {
@@ -18,7 +17,7 @@ export const onConnection = (con: VoiceConnection) => {
         'headers' : {
           'Accept'        : 'application/vnd.wit.20160202+json',
           'Authorization' : 'Bearer ' + witToken,
-          'Content-Type'  : 'audio/wav',
+          'Content-Type'  : 'audio/raw;encoding=unsigned-integer;bits=32;rate=48000;endian=big',
           'Transfer-encoding'  : 'chunked'
         }
       }, (err, resp, body) => {
@@ -29,19 +28,5 @@ export const onConnection = (con: VoiceConnection) => {
         }
       }))
     }
-    /*
-    let newBuf;
-    const len = buf.length;
-    if(len % 2 === 1) {
-      newBuf = buf.slice(0, len-1);
-    } else {
-      newBuf = buf;
-    }
-    */
-    // console.log(newBuf.length);
-    // chunker.write(buf);
-    
-    user;
-    buf;
   })
 }
