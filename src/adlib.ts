@@ -1,53 +1,16 @@
 import { VoiceConnection } from 'discord.js';
-import { Detector, Models } from 'snowboy';
-import { WriteStream } from 'fs';
-const pcm = require('pcm-util');
-var wav = require('wav');
+import { Duplex } from 'stream';
+var ps = require('pocketsphinx').ps;
+const convert = require('pcm-convert')
 
-const models = new Models();
-
-models.add({
-  file: 'snowboyModels/Hello.pmdl',
-  sensitivity: '0.1',
-  hotwords : 'hello'
-});
-
-models.add({
-  file: 'snowboyModels/snowboy.umdl',
-  sensitivity: '0.9',
-  hotwords : 'snowboy'
-});
-
-const detector: WriteStream = new Detector({
-  resource: "snowboyModels/common.res",
-  models: models,
-  audioGain: 2.0,
-});
-
-detector.on('silence', function () {
-  // console.log('silence');
-});
-
-detector.on('sound', function (buffer) {
-  buffer;
-  // <buffer> contains the last chunk of the audio that triggers the "sound"
-  // event. It could be written to a wav stream.
-  // console.log('sound');
-});
-
-detector.on('error', function () {
-  console.log('error');
-});
-
-detector.on('hotword', function (index, hotword, buffer) {
-  // <buffer> contains the last chunk of the audio that triggers the "hotword"
-  // event. It could be written to a wav stream. You will have to use it
-  // together with the <buffer> in the "sound" event if you want to get audio
-  // data after the hotword.
-  console.log(buffer);
-  console.log('hotword', index, hotword);
-  process.exit();
-});
+const modeldir = "model/en-us/"
+var config = new ps.Decoder.defaultConfig();
+config.setString("-hmm", modeldir + "en-us");
+config.setString("-dict", modeldir + "cmudict-en-us.dict");
+config.setString("-lm", modeldir + "en-us.lm.bin");
+var decoder = new ps.Decoder(config);
+//decoder.setKeyphrase('mysearch', 'hello');
+//decoder.setSearch('mysearch');
 
 export const onConnection = (con: VoiceConnection) => {
   console.log('connected');
@@ -57,20 +20,39 @@ export const onConnection = (con: VoiceConnection) => {
   recv.on('opus', (user, buf) => {
     const uid = user.id;
     if(!pcmRecvs[uid]) {
-      var writer: WriteStream = new wav.FileWriter('output.wav');
       const strm = recv.createPCMStream(user);
       pcmRecvs[uid] = strm;
       console.log('start');
+      decoder.startUtt();
+
       strm.on('end', () => {
         console.log('finish');
+        decoder.endUtt();
         pcmRecvs[uid] = null
-        writer.end();
+        let it = decoder.seg().iter()
+        let seg;
+        while ((seg = it.next()) != null) {
+          console.log(seg.word, seg.startFrame, seg.endFrame);
+        }
+        it = decoder.nbest().iter()
+        console.log('nbest: ', decoder.nbest())
+        let i, hyp;
+        for (i = 0; i < 10 && ((hyp = it.next()) != null); i++) {
+          console.log(hyp.hypstr)
+        }
       });
-      con.playStream(strm);
+
       strm.on('data', data => {
-        writer.write(data);
-        detector.write(data);
+        // src  32-bit signed stereo PCM at 48KHz.
+        // dest single-channel (monaural), little-endian, unheadered 
+        // 16-bit signed PCM audio file sampled at 16000 Hz.
+        const convertedData = convert(data,
+          'int32 le stereo',
+          'int16 le mono'
+        );
+        decoder.processRaw(data, false, false);
       });
+
       return;
     }
     /*
