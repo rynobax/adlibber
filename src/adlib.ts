@@ -1,32 +1,38 @@
 import { VoiceConnection } from 'discord.js';
-const request = require('request');
-const witToken = process.env.WIT_TOKEN;
+import { random } from 'lodash';
 
-export const onConnection = (con: VoiceConnection) => {
-  console.log('connected');
-  const recv = con.createReceiver();
+const migos = ['quavo_migo.mp3'];
 
-  const pcmRecvs = {};
-  recv.on('opus', (user, buf) => {
-    const uid = user.id;
-    if(!pcmRecvs[uid]) {
-      pcmRecvs[uid] = true;
-      const strm = recv.createPCMStream(user);
-      strm.pipe(request.post({
-        'url'     : 'https://api.wit.ai/speech?v=20170307',
-        'headers' : {
-          'Accept'        : 'application/vnd.wit.20160202+json',
-          'Authorization' : 'Bearer ' + witToken,
-          'Content-Type'  : 'audio/raw;encoding=unsigned-integer;bits=32;rate=48000;endian=big',
-          'Transfer-encoding'  : 'chunked'
+const phrases = {
+    'seventeen thirty-eight': ['fetty_1738.mp3'],
+    'me guess': migos,
+    'me go': migos,
+    'me goes': migos,
+};
+
+let playing = false;
+export const createTextHandler = (con: VoiceConnection) => {
+    const handleText = (text: string) => {
+        console.log(text);
+        const matches = Object.keys(phrases).filter(p => text.includes(p));
+        console.log(matches);
+        if(matches.length === 0) return;
+        const keywordToUse = matches[random(0, matches.length - 1)];
+        const possibleAdlibs = phrases[keywordToUse];
+        const adlib = possibleAdlibs[random(0, possibleAdlibs.length - 1)];
+
+        if(playing === false) {
+            playing = true;
+            console.log(`./audio/${adlib}`);
+            con.playFile(`./audio/${adlib}`, {
+                volume: .05,
+            });
+            setTimeout(() => {
+                playing = false;
+            }, 3000);
         }
-      }, (err, resp, body) => {
-        if(err) {
-          console.error(err);
-        } else {
-          console.log(body);
-        }
-      }))
-    }
-  })
-}
+    };
+    return {
+        handleText,
+    };
+};
