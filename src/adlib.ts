@@ -4,10 +4,19 @@ import { random } from 'lodash';
 const migos = ['quavo_migo.mp3'];
 
 const phrases = {
-    'seventeen thirty-eight': ['fetty_1738.mp3'],
+    'seventeen thirty-eight': ['fetty_1738.mp3', 'fetty_yeahbaby'],
     'me guess': migos,
     'me go': migos,
     'me goes': migos,
+    'oh god': ['bigsean_ohgod.mp3'],
+    'true': ['2chainz_tru.mp3'],
+    'twenty one': ['21savage_21.mp3'],
+    'another one': ['khaled-anotherone.mp3'],
+    'dj calling': ['djkhaled_2.mp3'],
+    'gucci': ['gucci_1', 'gucci_4', 'gucci_9', 'gucci_14'],
+    'metro blooming': ['metro_somemo'],
+    'metro booming': ['metro_somemo'],
+    'metro moving': ['metro_somemo'],
 };
 
 let playing = false;
