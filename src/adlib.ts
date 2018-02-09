@@ -34,7 +34,7 @@ export const createTextHandler = (con: VoiceConnection) => {
             playing = true;
             console.log(`./audio/${adlib}`);
             con.playFile(`./audio/${adlib}`, {
-                volume: .05,
+                volume: .1,
             });
             setTimeout(() => {
                 playing = false;
