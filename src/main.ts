@@ -12,7 +12,7 @@ client.on('ready', () => {
 
 let joined = false;
 client.on('message', msg => {
-  if ((msg.content === '!MIGOS' || true) && !joined) {
+  if (msg.content === '$adlib' && !joined) {
     if (!msg.guild) return;
     joined = true;
     const voiceChannel = msg.member.voiceChannel;
